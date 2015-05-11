@@ -7,11 +7,15 @@
 
 .scoreBox {
   width: 150px;
-  height: 3em;
   border: 1px solid black;
   display: inline-block;
   line-height: 1.5;
   margin-bottom: 10px;
+}
+
+.counter {
+  font-size: 20px;
+  font-weight: bold;
 }
 
 #gameBoard {
@@ -35,7 +39,7 @@
   background-color: blue;
 }
 
-#reset {
+.reset {
   width: 300px;
   margin: 10px auto;
   padding: 10px;

@@ -169,7 +169,26 @@ $(document).ready( function() {
 
   }
 
-  $("#reset").on("click", resetBoard);
+  $("#resetBoard").on("click", resetBoard);
+
+
+  /******************************************
+
+    Reset the game counters
+
+  ******************************************/
+  var resetCounters = function () {
+
+    if ( confirm("Are you sure you want to clear the counters?") ) {
+      gameCounter = 0;
+      winsX = 0;
+      winsO = 0;
+      updateScores();
+    }
+
+  }
+
+  $("#resetCounters").on("click", resetCounters);
 
 
   /******************************************
