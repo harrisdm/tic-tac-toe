@@ -2,6 +2,7 @@
 .container {
   max-width: 960px;
   margin: auto;
+  text-align: center;
 }
 
 #gameBoard {
@@ -29,4 +30,17 @@
 
 .O {
   background-color: blue;
+}
+
+#reset {
+  width: 300px;
+  border: 1px solid black;
+  padding: 10px;
+  margin: 10px auto;
+  background-color: black;
+  color: white;
+  font-weight: bold;
+  text-align: center;
+  cursor: pointer;
+
 }
