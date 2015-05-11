@@ -1,5 +1,29 @@
 
+/******************************************
+
+  Create the game board and then attach on document.ready
+
+******************************************/
+  
+// Create gameBoard div
+var $gameBoard = $('<div id="gameBoard"></div>');
+
+// Append all the gameSquare divs
+for (var i = 1; i <= 9; i++) {
+  $gameBoard.append('<div id="'+i+'" class="gameSquare" data-player=""></div> ');
+}
+
+
+
 $(document).ready( function() {
+
+  /******************************************
+
+    Attach the gameboard to the DOM
+
+  ******************************************/
+  $("#gameBoardContainer").append($gameBoard);
+
 
   /******************************************
 
