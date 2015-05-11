@@ -7,7 +7,6 @@
 
 #gameBoard {
   width: 500px;
-  border: 1px solid black;
   margin: auto;
   text-align: center;
 }
@@ -17,11 +16,6 @@
   height: 150px;
   background-color: grey;
   display: inline-block;
-}
-
-.gameSquare:nth-child(3) {
-
-  clear: left;
 }
 
 .X {
@@ -34,13 +28,11 @@
 
 #reset {
   width: 300px;
-  border: 1px solid black;
-  padding: 10px;
   margin: 10px auto;
+  padding: 10px;
   background-color: black;
   color: white;
   font-weight: bold;
   text-align: center;
   cursor: pointer;
-
 }

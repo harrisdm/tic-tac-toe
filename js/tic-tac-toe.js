@@ -7,7 +7,7 @@ $(document).ready( function() {
 
   ******************************************/
   var moveCounter = 0;
-  var gameWon = false;
+  var gameOver = false;
 
 
   /******************************************
@@ -16,7 +16,10 @@ $(document).ready( function() {
 
   ******************************************/
   var findPlayer = function() {
-    return (moveCounter % 2 === 0) ? 1 : 0;
+
+    // Find if the move counter is odd or even
+    return (moveCounter % 2 === 0) ? "X" : "O";
+
   }
 
 
@@ -26,7 +29,8 @@ $(document).ready( function() {
 
   ******************************************/
   var validMove = function($element) {
-    if(gameWon) {
+
+    if(gameOver) {
       alert("The game has already been won");
       return false;
     } else if( $element.hasClass("X") || $element.hasClass("O") ) {
@@ -41,6 +45,19 @@ $(document).ready( function() {
 
   /******************************************
 
+    Assign a game square to the given player
+
+  ******************************************/
+  var assignGameSquare = function($element, player) {
+
+    $element.data("player", player);
+    $element.addClass(player);
+
+  }
+
+
+  /******************************************
+
     Make the player's move
 
   ******************************************/
@@ -49,23 +66,19 @@ $(document).ready( function() {
     // Check that the option is a valid move
     if(validMove($(this))) {
 
-      // Discover which player is making a move and change the appearance
-      if(findPlayer()) {
-        $(this).data("player", "X");
-        $(this).addClass("X");
-      } else {
-        $(this).data("player", "O");
-        $(this).addClass("O");
-      }
+      // Assign player to the game square
+      assignGameSquare($(this), findPlayer());
 
+      // Increase the number of moves made
       moveCounter++;
 
-      checkWin();
+      // Decide if someone has won
+      gameOver = checkGameOver();
     }
+    
   };
 
   $(".gameSquare").on("click", playerMove);
-
 
 
   /******************************************
@@ -91,16 +104,40 @@ $(document).ready( function() {
       if( square_1 !== "") {
         // Check that the win state elements match
         if(square_1 === square_2 && square_1 === square_3) {
-          gameWon = true;
-          alert("game won!!");
+          alert("Game Won!!");
+          return true;
         }
       } 
     }
+  };
 
-    // Check if the game ends in a draw
-    if(!gameWon && moveCounter === 9) {
+
+  /******************************************
+
+    Check if the game is a draw
+
+  ******************************************/
+  var checkDraw = function() {
+
+    // Have all squares been selected  but no win
+    if(!gameOver && moveCounter === 9) {
       alert("DRAW: No more moves left");
+      return true;
     }
+
+  };
+
+
+  /******************************************
+
+    Check if the game is a draw
+
+  ******************************************/
+  var checkGameOver = function() {
+
+    // Has either game termination critera been met
+    // checkWin() must go first in case the final move results in a win
+    return ( checkWin() || checkDraw() ) ? true : false;
 
   };
 
@@ -111,20 +148,19 @@ $(document).ready( function() {
 
   ******************************************/
   var resetBoard = function () {
-    if(gameWon) {
+
+    if(gameOver) {
       $(".gameSquare").removeClass("X").removeClass("O").data("player","");
-      gameWon = false;
+      gameOver = false;
       moveCounter = 0;
     } else if(confirm("Are you sure you want to discard this game?")) {
-      gameWon = true;
+      gameOver = true;
       resetBoard();
-      gameWon = false;
-      moveCounter = 0;
     }
+
   }
 
   $("#reset").on("click", resetBoard);
-
 
 
 });
