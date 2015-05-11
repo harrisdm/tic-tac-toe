@@ -8,6 +8,9 @@ $(document).ready( function() {
   ******************************************/
   var moveCounter = 0;
   var gameOver = false;
+  var gameCounter = 0;
+  var winsX = 0;
+  var winsO = 0;
 
 
   /******************************************
@@ -74,8 +77,9 @@ $(document).ready( function() {
 
       // Decide if someone has won
       gameOver = checkGameOver();
+      if(gameOver) { gameCounter++ }
     }
-    
+
   };
 
   $(".gameSquare").on("click", playerMove);
@@ -104,6 +108,11 @@ $(document).ready( function() {
       if( square_1 !== "") {
         // Check that the win state elements match
         if(square_1 === square_2 && square_1 === square_3) {
+          if(square_1 === "X") {
+            winsX++;
+          } else {
+            winsO++;
+          }
           alert("Game Won!!");
           return true;
         }
@@ -161,6 +170,23 @@ $(document).ready( function() {
   }
 
   $("#reset").on("click", resetBoard);
+
+
+  /******************************************
+
+    Update the scoreboard 
+
+  ******************************************/
+  var updateScores = function() {
+
+    $("#scoreX").html(winsX);
+    $("#gameCount").html(gameCounter);
+    $("#scoreO").html(winsO);
+
+  }
+  // MAYBE CHANGE THE EVENT HANDLER OR TARGETED ELEMENT(S)
+  $(".gameSquare").on("click", updateScores);
+
 
 
 });
