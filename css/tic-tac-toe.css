@@ -1,0 +1,32 @@
+
+.container {
+  max-width: 960px;
+  margin: auto;
+}
+
+#gameBoard {
+  width: 500px;
+  border: 1px solid black;
+  margin: auto;
+  text-align: center;
+}
+
+.gameSquare {
+  width: 150px;
+  height: 150px;
+  background-color: grey;
+  display: inline-block;
+}
+
+.gameSquare:nth-child(3) {
+
+  clear: left;
+}
+
+.X {
+  background-color: red;
+}
+
+.O {
+  background-color: blue;
+}
