@@ -55,13 +55,13 @@ $(document).ready( function() {
     Check the selected box is a valid move
 
   ******************************************/
-  var validMove = function($element) {
+  var validMove = function($element, alertMsg) {
 
     if(gameOver) {
-      alert("The game has already been won");
+      if(alertMsg) { alert("The game has already been won"); }
       return false;
     } else if( $element.hasClass("X") || $element.hasClass("O") ) {
-      alert("That square has already been chosen");
+      if(alertMsg) { alert("That square has already been chosen"); }
       return false;
     } else {
       return true;
@@ -88,13 +88,13 @@ $(document).ready( function() {
     Make the player's move
 
   ******************************************/
-  var playerMove = function() {
+  var makeMove = function($element, alertMsg) {
 
     // Check that the option is a valid move
-    if(validMove($(this))) {
+    if(validMove($element, alertMsg)) {
 
       // Assign player to the game square
-      assignGameSquare($(this), findPlayer());
+      assignGameSquare($element, findPlayer());
 
       // Increase the number of moves made
       moveCounter++;
@@ -103,9 +103,30 @@ $(document).ready( function() {
       gameOver = checkGameOver();
       if(gameOver) { gameCounter++; }
 
+      return true;
+
     }
+    return false;
 
   };
+
+  var computerMove = function() {
+    var move = Math.ceil(Math.random() * 9);
+    //alert(move);
+    if( !gameOver && !makeMove($('#'+move), false) ) {
+      computerMove();
+    }
+    
+    //return makeMove($('#'+move), false);
+
+  }
+
+  var playerMove = function() {
+    makeMove($(this), true);
+
+    window.setTimeout(computerMove, 1000);
+    //while( !gameOver && !computerMove() ) {}
+  }
 
   $(".gameSquare").on("click", playerMove);
 
@@ -138,6 +159,7 @@ $(document).ready( function() {
           } else {
             winsO++;
           }
+          // Delay the win annimation until after the tile has finished turning
           window.setTimeout(winAnimation, 1500);
           return true;
         }
@@ -146,14 +168,17 @@ $(document).ready( function() {
   };
 
 
+  /******************************************
 
+    Animation for when a player wins
+
+  ******************************************/
   var winAnimation = function() {
     alert("Game Won!!");
 
     // Update the score board
     updateScores();
   }
-
 
 
   /******************************************
@@ -166,6 +191,10 @@ $(document).ready( function() {
     // Have all squares been selected  but no win
     if(!gameOver && moveCounter === 9) {
       alert("DRAW: No more moves left");
+
+      // Update the score board
+      updateScores();
+
       return true;
     }
 
@@ -182,7 +211,6 @@ $(document).ready( function() {
     // Has either game termination critera been met
     // checkWin() must go first in case the final move results in a win
     return ( checkWin() || checkDraw() ) ? true : false;
-    //gameOver = ( checkWin() || checkDraw() ) ? true : false;
 
   };
 
@@ -229,7 +257,7 @@ $(document).ready( function() {
 
   /******************************************
 
-    Update the scoreboard 
+    Update the scoreboard, called when a player wins
 
   ******************************************/
   var updateScores = function() {
@@ -239,8 +267,6 @@ $(document).ready( function() {
     $("#scoreO").html(winsO);
 
   }
-  // MAYBE CHANGE THE EVENT HANDLER OR TARGETED ELEMENT(S)
-  //$(document).on("click", updateScores);
 
 
 
