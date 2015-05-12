@@ -101,7 +101,8 @@ $(document).ready( function() {
 
       // Decide if someone has won
       gameOver = checkGameOver();
-      if(gameOver) { gameCounter++ }
+      if(gameOver) { gameCounter++; }
+
     }
 
   };
@@ -137,12 +138,22 @@ $(document).ready( function() {
           } else {
             winsO++;
           }
-          alert("Game Won!!");
+          window.setTimeout(winAnimation, 1500);
           return true;
         }
       } 
     }
   };
+
+
+
+  var winAnimation = function() {
+    alert("Game Won!!");
+
+    // Update the score board
+    updateScores();
+  }
+
 
 
   /******************************************
@@ -171,6 +182,7 @@ $(document).ready( function() {
     // Has either game termination critera been met
     // checkWin() must go first in case the final move results in a win
     return ( checkWin() || checkDraw() ) ? true : false;
+    //gameOver = ( checkWin() || checkDraw() ) ? true : false;
 
   };
 
@@ -228,7 +240,7 @@ $(document).ready( function() {
 
   }
   // MAYBE CHANGE THE EVENT HANDLER OR TARGETED ELEMENT(S)
-  $(".gameSquare").on("click", updateScores);
+  //$(document).on("click", updateScores);
 
 
 

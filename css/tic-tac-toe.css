@@ -32,11 +32,29 @@
 }
 
 .X {
-  background-color: red;
+  background-color: #ff0000;
+
+  transform-style: preserve-3d;
+  -webkit-transform: rotateX(180deg); /* Safari */
+  transform: rotateY(180deg);
+
+  -webkit-transition: all 1s ease-in-out;
+  -moz-transition: all 1s ease-in-out;
+  -o-transition: all 1s ease-in-out;
+  transition: transform 1s ease-out, background-color 0.5s ease-in-out 0.5s;
 }
 
 .O {
   background-color: blue;
+
+  transform-style: preserve-3d;
+  -webkit-transform: rotateX(180deg); /* Safari */
+  transform: rotateY(180deg);
+
+  -webkit-transition: all 1s ease-in-out;
+  -moz-transition: all 1s ease-in-out;
+  -o-transition: all 1s ease-in-out;
+  transition: transform 1s ease-out, background-color 0.5s ease-in-out 0.5s;
 }
 
 .reset {
