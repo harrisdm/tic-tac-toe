@@ -54,23 +54,17 @@ var debug = function(msg) {
 }
 
 
+
+
+
   /******************************************
 
-    Decide which player's turn it is
+    MAKE A MOVE ON THE BOARD
 
   ******************************************/
-  var findPlayer = function() {
-
-    // Find if the move counter is odd or even
-    return (moveCounter % 2 === 0) ? "X" : "O";
-
-  }
-
 
   /******************************************
-
     Check the selected box is a valid move
-
   ******************************************/
   var validMove = function($element, alertMsg) {
 
@@ -83,27 +77,21 @@ var debug = function(msg) {
     } else {
       return true;
     }
-
   }
 
 
   /******************************************
-
     Assign a game square to the given player
-
   ******************************************/
   var assignGameSquare = function($element, player) {
 
     $element.data("player", player);
     $element.addClass(player);
-
   }
 
 
   /******************************************
-
     Make a move on the given game square 
-
   ******************************************/
   var makeMove = function($element, alertMsg) {
 
@@ -120,18 +108,23 @@ var debug = function(msg) {
       gameOver = checkGameOver();
 
       return true;
-
     }
 
     return false;
-
   };
+
+
+
 
 
   /******************************************
 
-    Find a valid move that the computer can make
+    INITIATE HUMAN & COMPUTER MOVES
 
+  ******************************************/
+
+  /******************************************
+    Find a valid move that the computer can make
   ******************************************/
   var findComputerMove = function() {
 
@@ -142,16 +135,12 @@ var debug = function(msg) {
     if( !gameOver && !makeMove($('#'+move), false) ) {
 
       findComputerMove();
-
     }
-
   }
 
 
   /******************************************
-
     The Computer takes a turn
-
   ******************************************/
   var computerTurn = function() {
     
@@ -160,35 +149,36 @@ var debug = function(msg) {
 
     // Get the next turn
     getMove();
-    
   }
 
 
   /******************************************
-
     A Human takes a turn
-
   ******************************************/
   var humanTurn = function() {
     
     // Prevent the player from multi-clicking
     $(".gameSquare").off("click");
-    
-    //debug("Human Move:");
 
     // Make the players move
     makeMove($(this), true);
 
     // Get the next turn
-    getMove();
-    
+    getMove(); 
   }
+
+
+
 
 
   /******************************************
 
-    Check if the move won the game
+    DO WE HAVE A WINNER????
 
+  ******************************************/
+
+  /******************************************
+    Check if the move won the game
   ******************************************/
   var checkWin = function() {
 
@@ -216,7 +206,7 @@ var debug = function(msg) {
 
           gameCounter++;
 
-          // Delay the win annimation until after the tile has finished turning
+          // Delay WIN annimation until after the tile has finished turning
           window.setTimeout(winAnimation, 1500);
           return true;
         }
@@ -226,9 +216,7 @@ var debug = function(msg) {
 
 
   /******************************************
-
     Animation for when a player wins
-
   ******************************************/
   var winAnimation = function() {
     alert("Game Won!!");
@@ -239,9 +227,7 @@ var debug = function(msg) {
 
 
   /******************************************
-
     Check if the game is a draw
-
   ******************************************/
   var checkDraw = function() {
 
@@ -255,7 +241,6 @@ var debug = function(msg) {
 
       return true;
     }
-
   };
 
 
@@ -269,17 +254,46 @@ var debug = function(msg) {
     // Has either game termination critera been met
     // checkWin() must go first in case the final move results in a win
     return ( checkWin() || checkDraw() ) ? true : false;
-
   };
+
+
+  
 
 
   /******************************************
 
-    Reset the board for another game
+      GAME COUNTERS
 
   ******************************************/
-  var resetBoard = function () {
 
+  /******************************************
+    Reset the game counters
+  ******************************************/
+  var resetCounters = function () {
+    if ( confirm("Are you sure you want to clear the counters?") ) {
+      gameCounter = 0;
+      winsX = 0;
+      winsO = 0;
+      updateScores();
+    }
+  }
+  $("#resetCounters").on("click", resetCounters);
+
+
+  /******************************************
+    Update the scoreboard, called when a player wins
+  ******************************************/
+  var updateScores = function() {
+    $("#scoreX").html(winsX);
+    $("#gameCount").html(gameCounter);
+    $("#scoreO").html(winsO);
+  }
+
+
+  /******************************************
+    Reset the board for another game
+  ******************************************/
+  var resetBoard = function () {
     if(gameOver) {
       $(".gameSquare").removeClass("X").removeClass("O").data("player","");
       gameOver = false;
@@ -288,47 +302,22 @@ var debug = function(msg) {
       gameOver = true;
       resetBoard();
     }
-
   }
-
   $("#resetBoard").on("click", resetBoard);
 
 
-  /******************************************
 
-    Reset the game counters
-
-  ******************************************/
-  var resetCounters = function () {
-
-    if ( confirm("Are you sure you want to clear the counters?") ) {
-      gameCounter = 0;
-      winsX = 0;
-      winsO = 0;
-      updateScores();
-    }
-
-  }
-
-  $("#resetCounters").on("click", resetCounters);
-
+  
 
   /******************************************
 
-    Update the scoreboard, called when a player wins
+      GAMEPLAY CONTROLS
 
   ******************************************/
-  var updateScores = function() {
 
-    $("#scoreX").html(winsX);
-    $("#gameCount").html(gameCounter);
-    $("#scoreO").html(winsO);
-
-  }
-
-
-
-
+  /******************************************
+      Toggle between Human and Computer
+  ******************************************/
   var changeInputType = function() {
     if ( $(this).html() === "Human" ) {
       $(this).html("Computer");
@@ -339,29 +328,40 @@ var debug = function(msg) {
       $(this).data("input", "human")
     }
   }
-
   $(".playerType").on("click", changeInputType);
 
 
+  /******************************************
+      Toggle between Start and Stopped states
+  ******************************************/
   var changeGamePlay = function() {
     if ( $(this).html() === "Start" ) {
-      // Start Actions
+      
+      // Convert the Start button into a Stop button
       $(this).html("Stop").addClass("stop").removeClass("start");
+
+      // Prevent the input type being changed while playing
       $(".playerType").off("click");
 
+      // Grab the input types for the two players
       inputTypeX = ( $("#playerX").data("input") === "human" ) ? 0 : 1;
       inputTypeO = ( $("#playerO").data("input") === "human" ) ? 0 : 1;
       
+      // Game is no longer stopped
       gameStop = false;
 
+      // Get a move
       getMove();
     }
     else {
-      // Stop Actions
+
+      // Convert the Stop button into a Start button
       $(this).html("Start").addClass("start").removeClass("stop");
+
+      // Allow the input type to be changed again
       $(".playerType").on("click", changeInputType);
 
-      // Stop human players by removing game square clicking
+      // Stop humans playing by removing game square clicking
       $(".gameSquare").off("click");
 
       // Stop computer players
@@ -369,7 +369,6 @@ var debug = function(msg) {
 
     }
   }
-
   $("#gamePlay").on("click", changeGamePlay);
 
 
@@ -378,23 +377,35 @@ var debug = function(msg) {
 
   /******************************************
 
-    Control who makes the next move
+    CALCULATING PLAYER TURNS
 
   ******************************************/
+
+  /******************************************
+    Decide which player's turn it is
+  ******************************************/
+  var findPlayer = function() {
+    // Find if the move counter is odd or even
+    return (moveCounter % 2 === 0) ? "X" : "O";
+
+  }
+
+  /******************************************
+    Determine if player in Human or Computer
+  ******************************************/
   var selectPlayerInput = function(playerInput) {
-    if(playerInput === 0) {
+    if ( playerInput === 0 ) {
       $(".gameSquare").on("click", humanTurn);
     } else {
       window.setTimeout(computerTurn, 1000);
     }
   }
 
+  /******************************************
+    Control who makes the next move
+  ******************************************/
   var getMove = function() {
-
-    if(!gameOver && !gameStop) {
-
-      //console.log("X: " + inputTypeX);
-      //console.log("O: " + inputTypeO);
+    if ( !gameOver && !gameStop ) {
 
       var player = findPlayer();
       if(player === "X") {
@@ -402,9 +413,7 @@ var debug = function(msg) {
       } else {
         selectPlayerInput(inputTypeO);
       }
-      
     }
-
   }
 
 
