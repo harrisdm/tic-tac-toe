@@ -17,6 +17,8 @@ for (var i = 1; i <= 9; i++) {
 
 $(document).ready( function() {
 
+  $("#playAgain").hide();
+
   /******************************************
 
     Attach the gameboard to the DOM
@@ -31,27 +33,27 @@ $(document).ready( function() {
 
   ******************************************/
   var gameOver = false;
-  var gameStop = true;
+  var gameStop = false;
   var moveCounter = 0;
   var gameCounter = 0;
   var winsX = 0;
   var winsO = 0;
-  var inputTypeX;
-  var inputTypeO;
+  var inputTypeX = ( $("#playerX").data("input") === "human" ) ? 0 : 1;
+  var inputTypeO = ( $("#playerO").data("input") === "human" ) ? 0 : 1;
 
 
-var debug = function(msg) {
-  console.log(msg);
-  console.log("gameOver: " + gameOver);
-  console.log("gameStop: " + gameStop);
-  console.log("maveCounter: " + moveCounter);
-  console.log("gameCounter: " + gameCounter);
-  console.log("winsX: " + winsX);
-  console.log("winsO: " + winsO);
-  console.log("inputTypeX: " + inputTypeX);
-  console.log("inputTypeO: " + inputTypeO);
-  console.log("");
-}
+  var debug = function(msg) {
+    console.log(msg);
+    console.log("gameOver: " + gameOver);
+    console.log("gameStop: " + gameStop);
+    console.log("maveCounter: " + moveCounter);
+    console.log("gameCounter: " + gameCounter);
+    console.log("winsX: " + winsX);
+    console.log("winsO: " + winsO);
+    console.log("inputTypeX: " + inputTypeX);
+    console.log("inputTypeO: " + inputTypeO);
+    console.log("");
+  };
 
 
 
@@ -77,7 +79,7 @@ var debug = function(msg) {
     } else {
       return true;
     }
-  }
+  };
 
 
   /******************************************
@@ -87,7 +89,7 @@ var debug = function(msg) {
 
     $element.data("player", player);
     $element.addClass(player);
-  }
+  };
 
 
   /******************************************
@@ -136,7 +138,7 @@ var debug = function(msg) {
 
       findComputerMove();
     }
-  }
+  };
 
 
   /******************************************
@@ -149,7 +151,7 @@ var debug = function(msg) {
 
     // Get the next turn
     getMove();
-  }
+  };
 
 
   /******************************************
@@ -165,7 +167,7 @@ var debug = function(msg) {
 
     // Get the next turn
     getMove(); 
-  }
+  };
 
 
 
@@ -176,6 +178,17 @@ var debug = function(msg) {
     DO WE HAVE A WINNER????
 
   ******************************************/
+
+  /******************************************
+    Animation for when a player wins
+  ******************************************/
+  var winAnimation = function() {
+    alert("Game Won!!");
+    $("#playAgain").slideDown(500);
+    // Update the score board
+    updateScores();
+  };
+
 
   /******************************************
     Check if the move won the game
@@ -216,14 +229,14 @@ var debug = function(msg) {
 
 
   /******************************************
-    Animation for when a player wins
+    Animation for when a game draws
   ******************************************/
-  var winAnimation = function() {
-    alert("Game Won!!");
-
+  var drawAnimation = function() {
+    alert("DRAW: No more moves left");
+    $("#playAgain").slideDown(500);
     // Update the score board
     updateScores();
-  }
+  };
 
 
   /******************************************
@@ -233,21 +246,18 @@ var debug = function(msg) {
 
     // Have all squares been selected  but no win
     if(!gameOver && moveCounter === 9) {
-      alert("DRAW: No more moves left");
 
-      // Update the score board
       gameCounter++;
-      updateScores();
 
+      // Delay DRAW annimation until after the tile has finished turning
+      window.setTimeout(drawAnimation, 1500);
       return true;
     }
   };
 
 
   /******************************************
-
-    Check if the game is a draw
-
+    Check if the game is over
   ******************************************/
   var checkGameOver = function() {
 
@@ -276,7 +286,7 @@ var debug = function(msg) {
       winsO = 0;
       updateScores();
     }
-  }
+  };
   $("#resetCounters").on("click", resetCounters);
 
 
@@ -287,7 +297,7 @@ var debug = function(msg) {
     $("#scoreX").html(winsX);
     $("#gameCount").html(gameCounter);
     $("#scoreO").html(winsO);
-  }
+  };
 
 
   /******************************************
@@ -298,12 +308,21 @@ var debug = function(msg) {
       $(".gameSquare").removeClass("X").removeClass("O").data("player","");
       gameOver = false;
       moveCounter = 0;
+      $("#playAgain").slideUp(500);
+      getMove();
+
     } else if(confirm("Are you sure you want to discard this game?")) {
+      //$(".gameSquare").removeClass("X").removeClass("O").data("player","");
+      //gameOver = false;
+      //moveCounter = 0;
+      //if ( inputTypeX === 1 ) {
+      //  getMove();
+      //}
       gameOver = true;
       resetBoard();
     }
-  }
-  $("#resetBoard").on("click", resetBoard);
+  };
+  $("#playAgain").on("click", resetBoard);
 
 
 
@@ -327,18 +346,18 @@ var debug = function(msg) {
       $(this).html("Human");
       $(this).data("input", "human")
     }
-  }
-  $(".playerType").on("click", changeInputType);
+  };
+  //$(".playerType").on("click", changeInputType);
 
 
   /******************************************
       Toggle between Start and Stopped states
   ******************************************/
   var changeGamePlay = function() {
-    if ( $(this).html() === "Start" ) {
+    if ( $(this).html() === "Save" ) {
       
       // Convert the Start button into a Stop button
-      $(this).html("Stop").addClass("stop").removeClass("start");
+      $(this).html("Change").addClass("stop").removeClass("start");
 
       // Prevent the input type being changed while playing
       $(".playerType").off("click");
@@ -356,7 +375,7 @@ var debug = function(msg) {
     else {
 
       // Convert the Stop button into a Start button
-      $(this).html("Start").addClass("start").removeClass("stop");
+      $(this).html("Save").addClass("start").removeClass("stop");
 
       // Allow the input type to be changed again
       $(".playerType").on("click", changeInputType);
@@ -368,7 +387,7 @@ var debug = function(msg) {
       gameStop = true;
 
     }
-  }
+  };
   $("#gamePlay").on("click", changeGamePlay);
 
 
@@ -387,8 +406,7 @@ var debug = function(msg) {
   var findPlayer = function() {
     // Find if the move counter is odd or even
     return (moveCounter % 2 === 0) ? "X" : "O";
-
-  }
+  };
 
   /******************************************
     Determine if player in Human or Computer
@@ -399,7 +417,7 @@ var debug = function(msg) {
     } else {
       window.setTimeout(computerTurn, 1000);
     }
-  }
+  };
 
   /******************************************
     Control who makes the next move
@@ -414,8 +432,9 @@ var debug = function(msg) {
         selectPlayerInput(inputTypeO);
       }
     }
-  }
+  };
 
+  getMove();
 
 });
 
