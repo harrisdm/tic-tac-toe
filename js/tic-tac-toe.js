@@ -31,12 +31,27 @@ $(document).ready( function() {
 
   ******************************************/
   var gameOver = false;
+  var gameStop = true;
   var moveCounter = 0;
   var gameCounter = 0;
   var winsX = 0;
   var winsO = 0;
   var inputTypeX;
   var inputTypeO;
+
+
+var debug = function(msg) {
+  console.log(msg);
+  console.log("gameOver: " + gameOver);
+  console.log("gameStop: " + gameStop);
+  console.log("maveCounter: " + moveCounter);
+  console.log("gameCounter: " + gameCounter);
+  console.log("winsX: " + winsX);
+  console.log("winsO: " + winsO);
+  console.log("inputTypeX: " + inputTypeX);
+  console.log("inputTypeO: " + inputTypeO);
+  console.log("");
+}
 
 
   /******************************************
@@ -159,6 +174,8 @@ $(document).ready( function() {
     // Prevent the player from multi-clicking
     $(".gameSquare").off("click");
     
+    //debug("Human Move:");
+
     // Make the players move
     makeMove($(this), true);
 
@@ -267,7 +284,6 @@ $(document).ready( function() {
       $(".gameSquare").removeClass("X").removeClass("O").data("player","");
       gameOver = false;
       moveCounter = 0;
-      getMove();
     } else if(confirm("Are you sure you want to discard this game?")) {
       gameOver = true;
       resetBoard();
@@ -336,7 +352,7 @@ $(document).ready( function() {
       inputTypeX = ( $("#playerX").data("input") === "human" ) ? 0 : 1;
       inputTypeO = ( $("#playerO").data("input") === "human" ) ? 0 : 1;
       
-      gameOver = false;
+      gameStop = false;
 
       getMove();
     }
@@ -349,7 +365,7 @@ $(document).ready( function() {
       $(".gameSquare").off("click");
 
       // Stop computer players
-      gameOver = true;
+      gameStop = true;
 
     }
   }
@@ -375,10 +391,10 @@ $(document).ready( function() {
 
   var getMove = function() {
 
-    if(!gameOver) {
+    if(!gameOver && !gameStop) {
 
-      console.log("X: " + inputTypeX);
-      console.log("O: " + inputTypeO);
+      //console.log("X: " + inputTypeX);
+      //console.log("O: " + inputTypeO);
 
       var player = findPlayer();
       if(player === "X") {
@@ -390,9 +406,6 @@ $(document).ready( function() {
     }
 
   }
-
-  // Start the game
-  //getMove();
 
 
 });
