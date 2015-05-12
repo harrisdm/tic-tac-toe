@@ -30,8 +30,8 @@ $(document).ready( function() {
     Initialise the default global variables
 
   ******************************************/
-  var moveCounter = 0;
   var gameOver = false;
+  var moveCounter = 0;
   var gameCounter = 0;
   var winsX = 0;
   var winsO = 0;
@@ -85,7 +85,7 @@ $(document).ready( function() {
 
   /******************************************
 
-    Make the player's move
+    Make a move on the given game square 
 
   ******************************************/
   var makeMove = function($element, alertMsg) {
@@ -101,46 +101,69 @@ $(document).ready( function() {
 
       // Decide if someone has won
       gameOver = checkGameOver();
-      if(gameOver) { gameCounter++; }
 
       return true;
 
     }
+
     return false;
 
   };
 
 
+  /******************************************
 
-  var makeComputerMove = function() {
+    Find a valid move that the computer can make
+
+  ******************************************/
+  var findComputerMove = function() {
+
+    // Pick a random square
     var move = Math.ceil(Math.random() * 9);
-    //alert(move);
+    
+    // Until a valid move is found, keep searching
     if( !gameOver && !makeMove($('#'+move), false) ) {
-      makeComputerMove();
+
+      findComputerMove();
+
     }
+
   }
 
 
-  var computerMove = function() {
-    
-    //
-    makeComputerMove();
+  /******************************************
 
-    //return true;
+    The Computer takes a turn
+
+  ******************************************/
+  var computerTurn = function() {
+    
+    // Find and make a move
+    findComputerMove();
+
+    // Get the next turn
     getMove();
     
   }
 
-  var playerMove = function() {
+
+  /******************************************
+
+    A Player takes a turn
+
+  ******************************************/
+  var playerTurn = function() {
     
+    // Prevent the player from multi-clicking
     $(".gameSquare").off("click");
     
+    // Make the players move
     makeMove($(this), true);
 
+    // Get the next turn
     getMove();
     
   }
- // $(".gameSquare").on("click", playerMove);
 
 
   /******************************************
@@ -171,6 +194,9 @@ $(document).ready( function() {
           } else {
             winsO++;
           }
+
+          gameCounter++;
+
           // Delay the win annimation until after the tile has finished turning
           window.setTimeout(winAnimation, 1500);
           return true;
@@ -205,6 +231,7 @@ $(document).ready( function() {
       alert("DRAW: No more moves left");
 
       // Update the score board
+      gameCounter++;
       updateScores();
 
       return true;
@@ -284,31 +311,39 @@ $(document).ready( function() {
 
 
 
+  /******************************************
+
+    Control who makes the next move
+
+  ******************************************/
+  var turnX = 1;
+  var turnO = 0;
+
+
+  var selectTurnInput = function(player) {
+    if(player === 0) {
+      $(".gameSquare").on("click", playerTurn);
+    } else {
+      window.setTimeout(computerTurn, 1000);
+    }
+  }
 
   var getMove = function() {
 
     if(!gameOver) {
-      console.log("Game On");
-      var player = findPlayer();
-      var result = false;
-      console.log(player);
-      if(player === "X") {
-        console.log("player");
-        $(".gameSquare").on("click", playerMove);
-      } else {
-        console.log("computer")
-        result = window.setTimeout(computerMove, 1000);
-        //console.log("result: " + result);
-        //if(result === 1) { getMove(); }
-      }
 
+      var player = findPlayer();
+      if(player === "X") {
+        selectTurnInput(turnX);
+      } else {
+        selectTurnInput(turnO);
+      }
       
-    } else {
-      console.log("game Over");
     }
 
   }
 
+  // Start the game
   getMove();
 
 
