@@ -35,6 +35,8 @@ $(document).ready( function() {
   var gameCounter = 0;
   var winsX = 0;
   var winsO = 0;
+  var inputTypeX;
+  var inputTypeO;
 
 
   /******************************************
@@ -149,10 +151,10 @@ $(document).ready( function() {
 
   /******************************************
 
-    A Player takes a turn
+    A Human takes a turn
 
   ******************************************/
-  var playerTurn = function() {
+  var humanTurn = function() {
     
     // Prevent the player from multi-clicking
     $(".gameSquare").off("click");
@@ -311,18 +313,61 @@ $(document).ready( function() {
 
 
 
+  var changeInputType = function() {
+    if ( $(this).html() === "Human" ) {
+      $(this).html("Computer");
+      $(this).data("input", "computer")
+    }
+    else {
+      $(this).html("Human");
+      $(this).data("input", "human")
+    }
+  }
+
+  $(".playerType").on("click", changeInputType);
+
+
+  var changeGamePlay = function() {
+    if ( $(this).html() === "Start" ) {
+      // Start Actions
+      $(this).html("Stop").addClass("stop").removeClass("start");
+      $(".playerType").off("click");
+
+      inputTypeX = ( $("#playerX").data("input") === "human" ) ? 0 : 1;
+      inputTypeO = ( $("#playerO").data("input") === "human" ) ? 0 : 1;
+      
+      gameOver = false;
+
+      getMove();
+    }
+    else {
+      // Stop Actions
+      $(this).html("Start").addClass("start").removeClass("stop");
+      $(".playerType").on("click", changeInputType);
+
+      // Stop human players by removing game square clicking
+      $(".gameSquare").off("click");
+
+      // Stop computer players
+      gameOver = true;
+
+    }
+  }
+
+  $("#gamePlay").on("click", changeGamePlay);
+
+
+
+
+
   /******************************************
 
     Control who makes the next move
 
   ******************************************/
-  var turnX = 1;
-  var turnO = 0;
-
-
-  var selectTurnInput = function(player) {
-    if(player === 0) {
-      $(".gameSquare").on("click", playerTurn);
+  var selectPlayerInput = function(playerInput) {
+    if(playerInput === 0) {
+      $(".gameSquare").on("click", humanTurn);
     } else {
       window.setTimeout(computerTurn, 1000);
     }
@@ -332,11 +377,14 @@ $(document).ready( function() {
 
     if(!gameOver) {
 
+      console.log("X: " + inputTypeX);
+      console.log("O: " + inputTypeO);
+
       var player = findPlayer();
       if(player === "X") {
-        selectTurnInput(turnX);
+        selectPlayerInput(inputTypeX);
       } else {
-        selectTurnInput(turnO);
+        selectPlayerInput(inputTypeO);
       }
       
     }
@@ -344,7 +392,7 @@ $(document).ready( function() {
   }
 
   // Start the game
-  getMove();
+  //getMove();
 
 
 });
