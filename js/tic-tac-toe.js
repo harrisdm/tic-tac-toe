@@ -110,25 +110,37 @@ $(document).ready( function() {
 
   };
 
-  var computerMove = function() {
+
+
+  var makeComputerMove = function() {
     var move = Math.ceil(Math.random() * 9);
     //alert(move);
     if( !gameOver && !makeMove($('#'+move), false) ) {
-      computerMove();
+      makeComputerMove();
     }
-    
-    //return makeMove($('#'+move), false);
+  }
 
+
+  var computerMove = function() {
+    
+    //
+    makeComputerMove();
+
+    //return true;
+    getMove();
+    
   }
 
   var playerMove = function() {
+    
+    $(".gameSquare").off("click");
+    
     makeMove($(this), true);
 
-    window.setTimeout(computerMove, 1000);
-    //while( !gameOver && !computerMove() ) {}
+    getMove();
+    
   }
-
-  $(".gameSquare").on("click", playerMove);
+ // $(".gameSquare").on("click", playerMove);
 
 
   /******************************************
@@ -226,6 +238,7 @@ $(document).ready( function() {
       $(".gameSquare").removeClass("X").removeClass("O").data("player","");
       gameOver = false;
       moveCounter = 0;
+      getMove();
     } else if(confirm("Are you sure you want to discard this game?")) {
       gameOver = true;
       resetBoard();
@@ -268,6 +281,35 @@ $(document).ready( function() {
 
   }
 
+
+
+
+
+  var getMove = function() {
+
+    if(!gameOver) {
+      console.log("Game On");
+      var player = findPlayer();
+      var result = false;
+      console.log(player);
+      if(player === "X") {
+        console.log("player");
+        $(".gameSquare").on("click", playerMove);
+      } else {
+        console.log("computer")
+        result = window.setTimeout(computerMove, 1000);
+        //console.log("result: " + result);
+        //if(result === 1) { getMove(); }
+      }
+
+      
+    } else {
+      console.log("game Over");
+    }
+
+  }
+
+  getMove();
 
 
 });
