@@ -116,8 +116,12 @@ $(document).ready( function() {
       // Track # moves to choose next player
       totalMoves++;
 
-      // Track # moves in the small games
-      subMoves[$element.parent().attr('class').split(' ')[0] - 1]++;
+      if(isSuperGame) {
+        // Track # moves in the small games
+        subMoves[$element.parent().attr('class').split(' ')[0] - 1]++;
+      } else {
+        masterMoves++;
+      }
 
       // Decide if someone has won
       gameOver = isGameOver();
@@ -290,7 +294,7 @@ $(document).ready( function() {
   *****************************************/
   var isDraw = function() {
     //console.log("isDraw");
-    //console.log(masterMoves);
+    console.log("isDraw - masterMoves: "+masterMoves);
     // Have all squares been selected but no win
     //var gameBoard = [$element.parent().attr('class').split(' ')[0] - 1]
     if ( !gameOver && masterMoves === 9 ) {
@@ -336,7 +340,7 @@ $(document).ready( function() {
     if ( isSuperGame && (isWinSub() || isDrawSub()) ) {
       return ( isWin() || isDraw() ) ? true : false;
     } else {
-      return false;
+      return ( isWin() || isDraw() ) ? true : false;
     }
 
 
@@ -364,14 +368,15 @@ $(document).ready( function() {
                                 .removeClass("draw")
                                 .data("player","")
                                 .show();
-     totalMoves = 0;
-     subMoves = [0,0,0,0,0,0,0,0,0];
-     masterMoves = 0;
+    if (!isSuperGame) { $(".gameSquare").hide(); }         
+    totalMoves = 0;
+    subMoves = [0,0,0,0,0,0,0,0,0];
+    masterMoves = 0;
 
-     gameOver = false;
-     gameStop = false;
+    gameOver = false;
+    gameStop = false;
 
-     getMove();
+    getMove();
   };
 
   /******************************************
@@ -379,17 +384,62 @@ $(document).ready( function() {
   ******************************************/
   var confirmResetBoard = function () {
     //console.log("Game Over: " + gameOver);
-    if(gameOver) {
+    if ( gameOver ) {
       //console.log("game over, do stuff");
       resetBoard();
 
       //$("#playAgain").slideUp(500);
+      return true;
 
     } else if(confirm("Are you sure you want to discard this game?")) {
       resetBoard();
+      return true;
     }
+    return false;
   };
   $("#playAgain").on("click", confirmResetBoard);
+
+
+
+
+
+
+
+  /******************************************
+    Toggle between Normal & Super game versions
+  ******************************************/
+  var toggleSuper = function() {
+    if ( confirmResetBoard() ) {
+      console.log("toggleSuper");
+      $(".gameBoard, .gameSquare").off("click");
+
+      $(".gameSquare").fadeToggle(1000);
+
+      if( $('#playSuper').html() == 'Play Super Tic-Tac-Toe' ) {
+
+        isSuperGame = true;
+        $('#playSuper').html('Play Normal Tic-Tac-Toe');
+        $(".gameBoard").off("click");
+
+      } else {
+
+        isSuperGame = false;
+        $('#playSuper').html('Play Super Tic-Tac-Toe');
+        $(".gameSquare").off("click");
+
+      }
+      console.log(isSuperGame);
+      getMove();
+    }
+  };
+  $("#playSuper").on("click", toggleSuper);
+
+
+
+
+
+
+
 
 
 
@@ -413,8 +463,10 @@ $(document).ready( function() {
     Determine if player in Human or Computer
   ******************************************/
   var selectPlayerInput = function(playerInput) {
-    if ( playerInput === 0 ) {
+    if ( isSuperGame && playerInput === 0 ) {
       $(".gameSquare").on("click", humanTurn);
+    } else if ( !isSuperGame && playerInput === 0 ) {
+      $(".gameBoard").on("click", humanTurn);
     } else {
       //window.setTimeout(computerTurn, 1000);
     }
