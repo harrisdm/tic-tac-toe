@@ -57,9 +57,10 @@ $(document).ready( function() {
   }
 
 
-  var inputTypeX = ( $("#playerX").data("input") === "human" ) ? 0 : 1;
-  var inputTypeO = ( $("#playerO").data("input") === "human" ) ? 0 : 1;
-
+  //var inputTypeX = ( $("#playerX").data("input") === "human" ) ? 0 : 1;
+  //var inputTypeO = ( $("#playerO").data("input") === "human" ) ? 0 : 1;
+  var inputTypeX = 1;
+  var inputTypeO = 1;
 
 
 
@@ -84,7 +85,11 @@ $(document).ready( function() {
     if(gameOver) {
       if(alertMsg) { alert("The game has already been won"); }
       return false;
-    } else if( $element.hasClass("X") || $element.hasClass("O") ) {
+    } else if( $element.hasClass("X") 
+                || $element.hasClass("O") 
+                || $element.parent().hasClass("X")
+                || $element.parent().hasClass("O")
+                || $element.parent().hasClass("draw")  ) {
       if(alertMsg) { alert("That square has already been chosen"); }
       return false;
     } else {
@@ -140,6 +145,41 @@ $(document).ready( function() {
     INITIATE HUMAN & COMPUTER MOVES
 
   ******************************************/
+
+  /******************************************
+    Find a valid move that the computer can make
+  ******************************************/
+  var findComputerMove = function() {
+
+    // Pick a random board
+    var board = Math.ceil(Math.random() * 9);
+
+    // Pick a random square
+    var square = Math.ceil(Math.random() * 9);
+    
+
+    if ( isSuperGame ) {
+      $element = $(".gameBoard").filter("."+board).children("."+square);
+    } else {
+      $element = $(".gameBoard").filter("."+board);
+    }
+
+    if ( !gameOver && !makeMove(false) ) {
+      findComputerMove();
+    }
+  };
+
+  /******************************************
+    The Computer takes a turn
+  ******************************************/
+  var computerTurn = function() {
+    
+    // Find and make a move
+    findComputerMove();
+
+    // Get the next turn
+    getMove();
+  };
 
   /******************************************
     A Human takes a turn
@@ -463,12 +503,19 @@ $(document).ready( function() {
     Determine if player in Human or Computer
   ******************************************/
   var selectPlayerInput = function(playerInput) {
-    if ( isSuperGame && playerInput === 0 ) {
+    // if ( isSuperGame && playerInput === 0 ) {
+    //   $(".gameSquare").on("click", humanTurn);
+    // } else if ( !isSuperGame && playerInput === 0 ) {
+    //   $(".gameBoard").on("click", humanTurn);
+    // } else {
+    //   window.setTimeout(computerTurn, 1000);
+    // }
+    if ( playerInput === 1 ) {
+      window.setTimeout(computerTurn, 1000);
+    } else if ( isSuperGame ) {
       $(".gameSquare").on("click", humanTurn);
-    } else if ( !isSuperGame && playerInput === 0 ) {
-      $(".gameBoard").on("click", humanTurn);
     } else {
-      //window.setTimeout(computerTurn, 1000);
+      $(".gameBoard").on("click", humanTurn);
     }
   };
 
