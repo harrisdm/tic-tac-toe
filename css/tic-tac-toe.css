@@ -13,15 +13,62 @@
   margin-bottom: 10px;
 }
 
+.playerBox {
+  width: 150px;
+  border: 1px solid black;
+  display: inline-block;
+  line-height: 1.5;
+  margin-bottom: 10px;
+}
+
+.playerType {
+  width: 150px;
+  margin: 0 auto;
+  background-color: black;
+  color: white;
+  font-weight: bold;
+  text-align: center;
+  cursor: pointer;
+}
+
+#gamePlay {
+  width: 150px;
+  padding: 10px 0;
+  margin: 0 auto;
+  color: white;
+  font-weight: bold;
+  text-align: center;
+  cursor: pointer;
+}
+
+#gamePlay.stop {
+  background-color: red;
+}
+
+#gamePlay.start {
+  background-color: green;
+}
+
 .counter {
   font-size: 20px;
   font-weight: bold;
+}
+
+#gameBoardContainer {
+  display: inline-block;
+}
+
+#sideBar {
+  width: 200px;
+  display: inline-block;
+  vertical-align: top;
 }
 
 #gameBoard {
   width: 500px;
   margin: auto;
   text-align: center;
+  display: inline-block;
 }
 
 .gameSquare {
@@ -58,7 +105,7 @@
 }
 
 .reset {
-  width: 300px;
+  width: 80%;
   margin: 10px auto;
   padding: 10px;
   background-color: black;
