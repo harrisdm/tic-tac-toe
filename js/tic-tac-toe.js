@@ -4,56 +4,65 @@
   Create the game board and then attach on document.ready
 
 ******************************************/
-  
-// Create gameBoard div
-var $gameBoard = $('<div id="gameBoard"></div>');
 
-// Append all the gameSquare divs
-for (var i = 1; i <= 9; i++) {
-  $gameBoard.append('<div id="'+i+'" class="gameSquare" data-player=""></div> ');
+var boards = [];
+
+// Create gameBoard div
+for(var i = 1; i <= 9; i++){
+  var $gameBoard = $('<div class="'+i+' gameBoard" data-player=""></div>');
+
+  // Append all the gameSquare divs
+  for (var j = 1; j <= 9; j++) {
+    $gameBoard.append('<div class="'+j+' gameSquare" data-player=""></div> ');
+  }
+  boards.push($gameBoard);
 }
+
+
+
+/******************************************
+
+  Initialise the default global variables
+
+******************************************/
+var totalMoves = 0;
+
+var gameOver = false;
+var gameStop = false;
+
+var gameCounter = 0;
+var winsX = 0;
+var winsO = 0;
+
+var isSuperGame = true;
+
+var currentPlayer;
+var $element;
 
 
 
 $(document).ready( function() {
 
-  $("#playAgain").hide();
 
   /******************************************
 
     Attach the gameboard to the DOM
 
   ******************************************/
-  $("#gameBoardContainer").append($gameBoard);
+  //$("#gameBoardContainer").append($gameBoard);
+  for(var i = 0; i < boards.length; i++) {
+    $("#gameBoardContainer").append(boards[i]);
+  }
 
 
-  /******************************************
-
-    Initialise the default global variables
-
-  ******************************************/
-  var gameOver = false;
-  var gameStop = false;
-  var moveCounter = 0;
-  var gameCounter = 0;
-  var winsX = 0;
-  var winsO = 0;
   var inputTypeX = ( $("#playerX").data("input") === "human" ) ? 0 : 1;
   var inputTypeO = ( $("#playerO").data("input") === "human" ) ? 0 : 1;
 
 
-  var debug = function(msg) {
-    console.log(msg);
-    console.log("gameOver: " + gameOver);
-    console.log("gameStop: " + gameStop);
-    console.log("maveCounter: " + moveCounter);
-    console.log("gameCounter: " + gameCounter);
-    console.log("winsX: " + winsX);
-    console.log("winsO: " + winsO);
-    console.log("inputTypeX: " + inputTypeX);
-    console.log("inputTypeO: " + inputTypeO);
-    console.log("");
-  };
+
+
+
+
 
 
 
@@ -68,7 +77,7 @@ $(document).ready( function() {
   /******************************************
     Check the selected box is a valid move
   ******************************************/
-  var validMove = function($element, alertMsg) {
+  var validMove = function(alertMsg) {
 
     if(gameOver) {
       if(alertMsg) { alert("The game has already been won"); }
@@ -85,33 +94,31 @@ $(document).ready( function() {
   /******************************************
     Assign a game square to the given player
   ******************************************/
-  var assignGameSquare = function($element, player) {
-
-    $element.data("player", player);
-    $element.addClass(player);
+  var assignSquare = function(element, player) {
+    element.data("player", player);
+    element.addClass(player);
   };
 
 
   /******************************************
     Make a move on the given game square 
   ******************************************/
-  var makeMove = function($element, alertMsg) {
+  var makeMove = function(alertMsg) {
 
     // Check that the option is a valid move
-    if(validMove($element, alertMsg)) {
+    if(validMove(alertMsg)) {
 
       // Assign player to the game square
-      assignGameSquare($element, findPlayer());
+      assignSquare($element, currentPlayer);
 
-      // Increase the number of moves made
-      moveCounter++;
+      // Track # moves to choose next player
+      totalMoves++;
 
       // Decide if someone has won
       gameOver = checkGameOver();
 
       return true;
     }
-
     return false;
   };
 
@@ -126,44 +133,18 @@ $(document).ready( function() {
   ******************************************/
 
   /******************************************
-    Find a valid move that the computer can make
-  ******************************************/
-  var findComputerMove = function() {
-
-    // Pick a random square
-    var move = Math.ceil(Math.random() * 9);
-    
-    // Until a valid move is found, keep searching
-    if( !gameOver && !makeMove($('#'+move), false) ) {
-
-      findComputerMove();
-    }
-  };
-
-
-  /******************************************
-    The Computer takes a turn
-  ******************************************/
-  var computerTurn = function() {
-    
-    // Find and make a move
-    findComputerMove();
-
-    // Get the next turn
-    getMove();
-  };
-
-
-  /******************************************
     A Human takes a turn
   ******************************************/
   var humanTurn = function() {
     
     // Prevent the player from multi-clicking
-    $(".gameSquare").off("click");
+    $(".gameBoard, .gameSquare").off("click");
+
+    // Keep track of the clicked box
+    $element = $(this);
 
     // Make the players move
-    makeMove($(this), true);
+    makeMove(true);
 
     // Get the next turn
     getMove(); 
@@ -186,7 +167,7 @@ $(document).ready( function() {
     alert("Game Won!!");
     $("#playAgain").slideDown(500);
     // Update the score board
-    updateScores();
+    //updateScores();
   };
 
 
@@ -194,7 +175,7 @@ $(document).ready( function() {
     Check if the move won the game
   ******************************************/
   var checkWin = function() {
-
+    console.log("checkWin");
     // What are the possible win states
     var winStates = [ [1,2,3], [4,5,6], [7,8,9], 
                       [1,4,7], [2,5,8], [3,6,9],
@@ -203,56 +184,36 @@ $(document).ready( function() {
     // Check the board against each of the win states
     for(var i = 0; i < winStates.length; i++) {
 
-      var square_1 = $("#"+winStates[i][0]).data("player");
-      var square_2 = $("#"+winStates[i][1]).data("player");
-      var square_3 = $("#"+winStates[i][2]).data("player");
+      var square_1 = $element.parent().children("."+winStates[i][0]).data("player");
+      var square_2 = $element.parent().children("."+winStates[i][1]).data("player");
+      var square_3 = $element.parent().children("."+winStates[i][2]).data("player");
+
+      console.log("1: "+square_1);
+      console.log("2: "+square_2);
+      console.log("3: "+square_3);
 
       // Ensure its not matching unselected game squares
-      if( square_1 !== "") {
+      if ( square_1 !== "" ) {
         // Check that the win state elements match
-        if(square_1 === square_2 && square_1 === square_3) {
-          if(square_1 === "X") {
-            winsX++;
-          } else {
-            winsO++;
-          }
+        if ( square_1 === square_2 && square_1 === square_3 ) {
+          $element.parent().children().hide();
+          assignSquare($element.parent(), currentPlayer);
+          
+          // if ( square_1 === "X" ) {
+          //   winsX++;
+          // } else {
+          //   winsO++;
+          // }
 
-          gameCounter++;
+          // gameCounter++;
 
           // Delay WIN annimation until after the tile has finished turning
-          window.setTimeout(winAnimation, 1500);
+          window.setTimeout(winAnimation, 1000);
           return true;
-        }
-      } 
+         }
+      }
     }
-  };
-
-
-  /******************************************
-    Animation for when a game draws
-  ******************************************/
-  var drawAnimation = function() {
-    alert("DRAW: No more moves left");
-    $("#playAgain").slideDown(500);
-    // Update the score board
-    updateScores();
-  };
-
-
-  /******************************************
-    Check if the game is a draw
-  ******************************************/
-  var checkDraw = function() {
-
-    // Have all squares been selected  but no win
-    if(!gameOver && moveCounter === 9) {
-
-      gameCounter++;
-
-      // Delay DRAW annimation until after the tile has finished turning
-      window.setTimeout(drawAnimation, 1500);
-      return true;
-    }
+    return false; 
   };
 
 
@@ -260,135 +221,16 @@ $(document).ready( function() {
     Check if the game is over
   ******************************************/
   var checkGameOver = function() {
-
+    console.log("checkGameOver");
     // Has either game termination critera been met
     // checkWin() must go first in case the final move results in a win
-    return ( checkWin() || checkDraw() ) ? true : false;
+    return ( checkWin() ) ? true : false;
+
+
   };
 
 
-  
 
-
-  /******************************************
-
-      GAME COUNTERS
-
-  ******************************************/
-
-  /******************************************
-    Reset the game counters
-  ******************************************/
-  var resetCounters = function () {
-    if ( confirm("Are you sure you want to clear the counters?") ) {
-      gameCounter = 0;
-      winsX = 0;
-      winsO = 0;
-      updateScores();
-    }
-  };
-  $("#resetCounters").on("click", resetCounters);
-
-
-  /******************************************
-    Update the scoreboard, called when a player wins
-  ******************************************/
-  var updateScores = function() {
-    $("#scoreX").html(winsX);
-    $("#gameCount").html(gameCounter);
-    $("#scoreO").html(winsO);
-  };
-
-
-  /******************************************
-    Reset the board for another game
-  ******************************************/
-  var resetBoard = function () {
-    if(gameOver) {
-      $(".gameSquare").removeClass("X").removeClass("O").data("player","");
-      gameOver = false;
-      moveCounter = 0;
-      $("#playAgain").slideUp(500);
-      getMove();
-
-    } else if(confirm("Are you sure you want to discard this game?")) {
-      //$(".gameSquare").removeClass("X").removeClass("O").data("player","");
-      //gameOver = false;
-      //moveCounter = 0;
-      //if ( inputTypeX === 1 ) {
-      //  getMove();
-      //}
-      gameOver = true;
-      resetBoard();
-    }
-  };
-  $("#playAgain").on("click", resetBoard);
-
-
-
-  
-
-  /******************************************
-
-      GAMEPLAY CONTROLS
-
-  ******************************************/
-
-  /******************************************
-      Toggle between Human and Computer
-  ******************************************/
-  var changeInputType = function() {
-    if ( $(this).html() === "Human" ) {
-      $(this).html("Computer");
-      $(this).data("input", "computer")
-    }
-    else {
-      $(this).html("Human");
-      $(this).data("input", "human")
-    }
-  };
-  //$(".playerType").on("click", changeInputType);
-
-
-  /******************************************
-      Toggle between Start and Stopped states
-  ******************************************/
-  var changeGamePlay = function() {
-    if ( $(this).html() === "Save" ) {
-      
-      // Convert the Start button into a Stop button
-      $(this).html("Change").addClass("stop").removeClass("start");
-
-      // Prevent the input type being changed while playing
-      $(".playerType").off("click");
-
-      // Grab the input types for the two players
-      inputTypeX = ( $("#playerX").data("input") === "human" ) ? 0 : 1;
-      inputTypeO = ( $("#playerO").data("input") === "human" ) ? 0 : 1;
-      
-      // Game is no longer stopped
-      gameStop = false;
-
-      // Get a move
-      getMove();
-    }
-    else {
-
-      // Convert the Stop button into a Start button
-      $(this).html("Save").addClass("start").removeClass("stop");
-
-      // Allow the input type to be changed again
-      $(".playerType").on("click", changeInputType);
-
-      // Stop humans playing by removing game square clicking
-      $(".gameSquare").off("click");
-
-      // Stop computer players
-      gameStop = true;
-
-    }
-  };
-  $("#gamePlay").on("click", changeGamePlay);
 
 
 
@@ -403,9 +245,9 @@ $(document).ready( function() {
   /******************************************
     Decide which player's turn it is
   ******************************************/
-  var findPlayer = function() {
-    // Find if the move counter is odd or even
-    return (moveCounter % 2 === 0) ? "X" : "O";
+  var findNextPlayer = function() {
+    // Find if the total move counter is odd or even
+    return (totalMoves % 2 === 0) ? "X" : "O";
   };
 
   /******************************************
@@ -415,7 +257,7 @@ $(document).ready( function() {
     if ( playerInput === 0 ) {
       $(".gameSquare").on("click", humanTurn);
     } else {
-      window.setTimeout(computerTurn, 1000);
+      //window.setTimeout(computerTurn, 1000);
     }
   };
 
@@ -424,9 +266,8 @@ $(document).ready( function() {
   ******************************************/
   var getMove = function() {
     if ( !gameOver && !gameStop ) {
-
-      var player = findPlayer();
-      if(player === "X") {
+      currentPlayer = findNextPlayer();
+      if(currentPlayer === "X") {
         selectPlayerInput(inputTypeX);
       } else {
         selectPlayerInput(inputTypeO);
@@ -434,9 +275,17 @@ $(document).ready( function() {
     }
   };
 
-  getMove();
+getMove();
 
 });
+
+
+
+
+
+
+
+
 
 
 
