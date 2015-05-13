@@ -26,6 +26,8 @@ for(var i = 1; i <= 9; i++){
 
 ******************************************/
 var totalMoves = 0;
+var subMoves = [0,0,0,0,0,0,0,0,0];
+var masterMoves = 0;
 
 var gameOver = false;
 var gameStop = false;
@@ -90,7 +92,7 @@ $(document).ready( function() {
     }
   };
 
-
+  
   /******************************************
     Assign a game square to the given player
   ******************************************/
@@ -114,8 +116,11 @@ $(document).ready( function() {
       // Track # moves to choose next player
       totalMoves++;
 
+      // Track # moves in the small games
+      subMoves[$element.parent().attr('class').split(' ')[0] - 1]++;
+
       // Decide if someone has won
-      gameOver = checkGameOver();
+      gameOver = isGameOver();
 
       return true;
     }
@@ -172,9 +177,9 @@ $(document).ready( function() {
 
 
   /******************************************
-    Check if the move won the game
+    Check if the move won a game
   ******************************************/
-  var checkWin = function() {
+  var isWin = function() {
     console.log("checkWin");
     // What are the possible win states
     var winStates = [ [1,2,3], [4,5,6], [7,8,9], 
@@ -188,16 +193,17 @@ $(document).ready( function() {
       var square_2 = $element.parent().children("."+winStates[i][1]).data("player");
       var square_3 = $element.parent().children("."+winStates[i][2]).data("player");
 
-      console.log("1: "+square_1);
-      console.log("2: "+square_2);
-      console.log("3: "+square_3);
+      // console.log("1: "+square_1);
+      // console.log("2: "+square_2);
+      // console.log("3: "+square_3);
 
       // Ensure its not matching unselected game squares
       if ( square_1 !== "" ) {
         // Check that the win state elements match
         if ( square_1 === square_2 && square_1 === square_3 ) {
-          $element.parent().children().hide();
+          $element.siblings().andSelf().hide();
           assignSquare($element.parent(), currentPlayer);
+          masterMoves++;
           
           // if ( square_1 === "X" ) {
           //   winsX++;
@@ -218,13 +224,47 @@ $(document).ready( function() {
 
 
   /******************************************
+    Animation for when a game draws
+  ******************************************/
+  var drawAnimation = function() {
+     alert("DRAW: No more moves left");
+  //   $("#playAgain").slideDown(500);
+  //   // Update the score board
+  //   //updateScores();
+  };
+
+
+  /*****************************************
+     Check if the game is a draw
+  *****************************************/
+  var isDraw = function() {
+    console.log("isDraw");
+    console.log(subMoves);
+    // Have all squares been selected but no win
+    if ( !gameOver && subMoves.indexOf(9) !== -1 ) {
+
+      $element.siblings().andSelf().hide();
+      assignSquare($element.parent(), "draw");
+
+
+  //     gameCounter++;
+
+      // Delay DRAW annimation until after the tile has finished turning
+      //window.setTimeout(drawAnimation, 1500);
+      return true;
+    }
+    return false;
+   };
+
+
+  /******************************************
     Check if the game is over
   ******************************************/
-  var checkGameOver = function() {
+  var isGameOver = function() {
     console.log("checkGameOver");
     // Has either game termination critera been met
     // checkWin() must go first in case the final move results in a win
-    return ( checkWin() ) ? true : false;
+    return ( isWin() || isDraw() ) ? true : false;
 
 
   };
@@ -267,7 +307,7 @@ $(document).ready( function() {
   var getMove = function() {
     if ( !gameOver && !gameStop ) {
       currentPlayer = findNextPlayer();
-      if(currentPlayer === "X") {
+      if ( currentPlayer === "X" ) {
         selectPlayerInput(inputTypeX);
       } else {
         selectPlayerInput(inputTypeO);
