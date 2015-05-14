@@ -30,17 +30,18 @@ var subMoves = [0,0,0,0,0,0,0,0,0];
 var masterMoves = 0;
 
 var gameOver = false;
-var gameStop = false;
 
 var gameCounter = 0;
 var winsX = 0;
 var winsO = 0;
 
-var isSuperGame = true;
+var isSuperGame = false;
 
 var currentPlayer;
 var $element;
 
+var inputTypeX;
+var inputTypeO;
 
 
 $(document).ready( function() {
@@ -57,13 +58,13 @@ $(document).ready( function() {
   }
 
 
-  //var inputTypeX = ( $("#playerX").data("input") === "human" ) ? 0 : 1;
-  //var inputTypeO = ( $("#playerO").data("input") === "human" ) ? 0 : 1;
-  var inputTypeX = 1;
-  var inputTypeO = 1;
+  // var inputTypeX = ( $("#playerX").data("input") === "human" ) ? 0 : 1;
+  // var inputTypeO = ( $("#playerO").data("input") === "human" ) ? 0 : 1;
+  //var inputTypeX = 1;
+  //var inputTypeO = 1;
 
 
-
+$(".gameSquare").hide();
 
 
 
@@ -220,6 +221,7 @@ $(document).ready( function() {
     alert("Game Won!!");
     
     //$("#playAgain").slideDown(500);
+    $("#controls").slideDown(500);
     
     // Update the score board
     updateScores();
@@ -323,6 +325,7 @@ $(document).ready( function() {
     alert("DRAW: No more moves left");
 
     //$("#playAgain").slideDown(500);
+    $("#controls").slideDown(500);
 
     // Update the score board
     updateScores();
@@ -334,7 +337,7 @@ $(document).ready( function() {
   *****************************************/
   var isDraw = function() {
     //console.log("isDraw");
-    console.log("isDraw - masterMoves: "+masterMoves);
+    //console.log("isDraw - masterMoves: "+masterMoves);
     // Have all squares been selected but no win
     //var gameBoard = [$element.parent().attr('class').split(' ')[0] - 1]
     if ( !gameOver && masterMoves === 9 ) {
@@ -408,16 +411,109 @@ $(document).ready( function() {
                                 .removeClass("draw")
                                 .data("player","")
                                 .show();
-    if (!isSuperGame) { $(".gameSquare").hide(); }         
-    totalMoves = 0;
+    //$(".gameSquare").fadeOut(1000);
+    if (!isSuperGame) { $(".gameSquare").hide(); }
+
+    totalMoves = $(".firstMove").data("input");
     subMoves = [0,0,0,0,0,0,0,0,0];
     masterMoves = 0;
 
     gameOver = false;
-    gameStop = false;
 
-    getMove();
+
+    
   };
+
+
+
+  /******************************************
+
+    GAMEPLAY CONTROLS
+
+  ******************************************/
+
+  /******************************************
+    Reset the game counters
+  ******************************************/
+  var resetCounters = function () {
+    if ( confirm("Are you sure you want to clear the counters?") ) {
+      gameCounter = 0;
+      winsX = 0;
+      winsO = 0;
+      updateScores();
+    }
+  };
+  $("#resetCounters").on("click", resetCounters);
+  
+  /******************************************
+    Toggle between Human and Computer
+  ******************************************/
+  var changeInputType = function() {
+    if ( $(this).html() === "Human" ) {
+      $(this).html("Computer");
+      $(this).data("input", "computer")
+    }
+    else {
+      $(this).html("Human");
+      $(this).data("input", "human")
+    }
+  };
+  $(".playerType").on("click", changeInputType);
+
+
+  /******************************************
+    Toggle first move
+  ******************************************/
+  var changeFirstPlayer = function() {
+    if ( $(this).html() === "Red" ) {
+      $(this).html("Blue");
+      $(this).data("input", 1)
+    }
+    else {
+      $(this).html("Red");
+      $(this).data("input", 0)
+    }
+  };
+  $(".firstMove").on("click", changeFirstPlayer);
+
+
+ /******************************************
+    Toggle between Normal & Super game versions
+  ******************************************/
+  var toggleSuper = function() {
+    //if ( confirmResetBoard() ) {
+      //console.log("toggleSuper");
+      $(".gameBoard, .gameSquare").off("click");
+
+      $(".gameSquare").fadeToggle(1000);
+
+      if( $('#playSuper').html() == 'Standard' ) {
+
+        isSuperGame = true;
+        $('#playSuper').html('Super');
+        $(".gameBoard").off("click");
+
+      } else {
+
+        isSuperGame = false;
+        $('#playSuper').html('Standard');
+        $(".gameSquare").off("click");
+
+      }
+
+      $(".gameBoard, .gameSquare").off("click")
+                                .removeClass("X")
+                                .removeClass("O")
+                                .removeClass("draw")
+                                .data("player","");
+      //console.log(isSuperGame);
+      //getMove();
+    //}
+
+      
+  };
+  $("#playSuper").on("click", toggleSuper);
+
 
   /******************************************
     Reset the board for another game
@@ -437,7 +533,15 @@ $(document).ready( function() {
     }
     return false;
   };
-  $("#playAgain").on("click", confirmResetBoard);
+
+  var newGame = function() {
+    resetBoard();
+    $("#controls").slideUp(500);
+    inputTypeX = ( $("#playerX").data("input") === "human" ) ? 0 : 1;
+    inputTypeO = ( $("#playerO").data("input") === "human" ) ? 0 : 1;
+    getMove();
+  }
+  $("#playAgain").on("click", newGame);
 
 
 
@@ -445,34 +549,7 @@ $(document).ready( function() {
 
 
 
-  /******************************************
-    Toggle between Normal & Super game versions
-  ******************************************/
-  var toggleSuper = function() {
-    if ( confirmResetBoard() ) {
-      console.log("toggleSuper");
-      $(".gameBoard, .gameSquare").off("click");
-
-      $(".gameSquare").fadeToggle(1000);
-
-      if( $('#playSuper').html() == 'Play Super Tic-Tac-Toe' ) {
-
-        isSuperGame = true;
-        $('#playSuper').html('Play Normal Tic-Tac-Toe');
-        $(".gameBoard").off("click");
-
-      } else {
-
-        isSuperGame = false;
-        $('#playSuper').html('Play Super Tic-Tac-Toe');
-        $(".gameSquare").off("click");
-
-      }
-      console.log(isSuperGame);
-      getMove();
-    }
-  };
-  $("#playSuper").on("click", toggleSuper);
+ 
 
 
 
@@ -523,8 +600,8 @@ $(document).ready( function() {
     Control who makes the next move
   ******************************************/
   var getMove = function() {
-    console.log("make a move");
-    if ( !gameOver && !gameStop ) {
+    //console.log("make a move");
+    if ( !gameOver ) {
       currentPlayer = findNextPlayer();
       if ( currentPlayer === "X" ) {
         selectPlayerInput(inputTypeX);
@@ -536,7 +613,7 @@ $(document).ready( function() {
     //console.log("Last Game Over: " + gameOver);
   };
 
-getMove();
+//getMove();
 
 });
 

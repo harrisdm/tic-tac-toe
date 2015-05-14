@@ -34,23 +34,55 @@
           </div>
           <div id="resetCounters" class="reset">Reset Counters</div>
         </fieldset>
-
-        <fieldset>
-          <legend>Player Input</legend>
-          <div class="playerBox">Red
-            <div id="playerX" class="playerType" data-input="human">Human</div>
-          </div>
-          <div class="playerBox">Blue
-            <div id="playerO" class="playerType" data-input="human">Human</div>
-          </div>
-          <div id="gamePlay" class="gamePlay stop">Change</div>
-        </fieldset>
       </div>
 
     </div>
 
-    <div id="playSuper" class="reset">Play Normal Tic-Tac-Toe</div>
-    <div id="playAgain" class="reset">Play Again</div>
+    <div id="controls">
+      <div class="top">
+        <div id="redPlayer" class="gameControl">
+          <div class="playerBox">Red
+            <div id="playerX" class="playerType" data-input="human">Human</div>
+          </div>
+        </div>
+        <div id="bluePlayer" class="gameControl">
+          <div class="playerBox">Blue
+            <div id="playerO" class="playerType" data-input="human">Human</div>
+          </div>
+        </div>
+        <div id="firstPlayer" class="gameControl">
+          <div class="moveFirstBox">First Move
+            <div id="player1" class="firstMove" data-input="0">Red</div>
+          </div>
+        </div>
+        <div id="gameType" class="gameControl">
+          <div class="playerBox">Board Type
+            <div id="playSuper" class="boardType">Standard</div>
+          </div>
+          <!--<div id="playSuper" class="reset">Play Normal Tic-Tac-Toe</div>-->
+        </div>
+      </div>
+      <div class="bottom">
+        <div id="playAgain" class="reset">Play</div>
+      </div>
+
+    <!--
+      <fieldset id="">
+        <legend>Player Input</legend>
+        <div class="playerBox">Red
+          <div id="playerX" class="playerType" data-input="human">Human</div>
+        </div>
+        <div class="playerBox">Blue
+          <div id="playerO" class="playerType" data-input="human">Human</div>
+        </div>
+        <div id="gamePlay" class="gamePlay stop">Change</div>
+      </fieldset>
+
+      <div id="playSuper" class="reset">Play Normal Tic-Tac-Toe</div>
+      <div id="playAgain" class="reset">Play Again</div>
+    -->
+    </div>
+    
   
   </div>
 
