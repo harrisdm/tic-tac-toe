@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>Tic-Tac-Toe</title>
+  <title>Star Wars || Tic-Tac-Toe</title>
   <link rel="stylesheet" href="css/tic-tac-toe.css">
   <script src="js/jquery-1.11.3.min.js"></script>
   <script src="js/tic-tac-toe.js"></script>
@@ -11,61 +11,82 @@
 
 
 <body>
+  
+  <audio id="audio">
+   <source src="Star Wars Theme.mp3" type="audio/mp3">
+  </audio>
 
+  <div id="splash"></div>
+
+  <div id="leftBg"></div>
+  <div id="rightBg"></div>
   <div class="container">
     
-    <h1>Tic-Tac-Toe</h1>
-    
-    <div id="wrapper">
-      
-      <div id="gameBoardContainer"></div>
+    <div id="empire"></div>
+    <div id="vs"></div>
+    <div id="rebels"></div>
 
-      <div id="sideBar">
-        <fieldset>
-          <legend>Scoreboard</legend>
-          <div class="scoreBox">Red
-            <div id="scoreX" class="counter"></div>
+    <div id="controlWrapper">
+      <div id="controlPanel">
+        
+        <div class="top">
+          
+          <div class="gameControl">
+            <div class="ctrlTitle">Empire
+              <div id="playerX" class="ctrlToggle" data-input="0">Darth Vader</div>
+            </div>
           </div>
-          <div class="scoreBox">Games
-            <div id="gameCount" class="counter"></div>
+          
+          <div class="gameControl">
+            <div class="ctrlTitle">Rebels
+              <div id="playerO" class="ctrlToggle" data-input="0">Yoda</div>
+            </div>
           </div>
-          <div class="scoreBox">Blue
-            <div id="scoreO" class="counter"></div>
+          
+          <div id="firstPlayer" class="gameControl">
+            <div class="ctrlTitle">First Move
+              <div id="player1" class="ctrlToggle firstMove" data-input="0">Empire</div>
+            </div>
           </div>
-          <div id="resetCounters" class="reset">Reset Counters</div>
-        </fieldset>
+          
+          <div id="gameType" class="gameControl">
+            <div class="ctrlTitle">Board Type
+              <div id="playSuper" class="ctrlToggle boardType">Standard</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bottom">
+          <div id="playAgain" class="reset">Play</div>
+        </div>
+
       </div>
-
     </div>
 
-    <div id="controlPanel">
-      <div class="top">
-        <div id="redPlayer" class="gameControl">
-          <div class="playerBox">Red
-            <div id="playerX" class="playerType" data-input="0">Human</div>
-          </div>
-        </div>
-        <div id="bluePlayer" class="gameControl">
-          <div class="playerBox">Blue
-            <div id="playerO" class="playerType" data-input="0">Human</div>
-          </div>
-        </div>
-        <div id="firstPlayer" class="gameControl">
-          <div class="moveFirstBox">First Move
-            <div id="player1" class="firstMove" data-input="0">Red</div>
-          </div>
-        </div>
-        <div id="gameType" class="gameControl">
-          <div class="playerBox">Board Type
-            <div id="playSuper" class="boardType">Standard</div>
-          </div>
-        </div>
+    <div id="logo"></div>
+    
+    <div id="gameWrapper">
+      <div id="gameBoardContainer">
+        <div id="winLine"></div>
       </div>
-      <div class="bottom">
-        <div id="playAgain" class="reset">Play</div>
+
+      <div id="scoreboard">
+        <fieldset>
+          <legend>Scoreboard</legend>
+          <div class="scoreBox">Empire
+            <div id="scoreX" class="scoreCount"></div>
+          </div>
+          <div class="scoreBox">Games
+            <div id="gameCount" class="scoreCount"></div>
+          </div>
+          <div class="scoreBox">Rebels
+            <div id="scoreO" class="scoreCount"></div>
+          </div>
+          <div id="resetCounters" class="reset">Reset</div>
+        </fieldset>
       </div>
-    </div>    
-  
+    </div>
+
   </div>
 
 </body>

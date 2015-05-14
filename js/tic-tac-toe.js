@@ -52,18 +52,46 @@ var inputTypeO;
 $(document).ready( function() {
 
   /******************************************
-    Attach the gameboard to the DOM
+    Initialise the page
   ******************************************/
+  // Attach the game boards
   for ( var i = 0; i < boards.length; i++ ) {
     $("#gameBoardContainer").append(boards[i]);
   }
 
-  // Initially hide the super gameboard
+  // Hide the super gameboard
   $(".gameSquare").hide();
 
 
+  /******************************************
+    Opening Splash
+  ******************************************/
+  $("#winLine, #controlWrapper, #logo, #gameWrapper").hide();
+  $("#leftBg, #rightBg, #empire, #vs, #rebels").hide();
 
+  setTimeout(function(){ $("#audio").trigger('play'); }, 750);
+  setTimeout(function(){ $("#splash").fadeOut(2000); },4000);
+  setTimeout(function(){ $("#logo").slideDown(1000); },7000);
 
+  setTimeout(function(){ $("#leftBg").fadeIn(500); },8000);
+  setTimeout(function(){ $("#rightBg").fadeIn(500); },8000);
+  setTimeout(function(){ $("#vs").slideDown(500); },8500);
+  setTimeout(function(){ $("#empire, #rebels").show(); },10000);
+
+  setTimeout(function(){ $("#empire, #vs, #rebels").fadeOut(500); },14000);
+  setTimeout(function(){ $("#gameWrapper").fadeIn(1000); },14000);
+  setTimeout(function(){ toggleControlPanel(); },15500);
+
+  function volumeDown(){
+      var volume = $("#audio").prop("volume")-0.01;
+      if(volume <0){
+          volume = 0;
+      }
+      $("#audio").prop("volume",volume);
+  }
+
+  timer = window.setInterval(volumeDown, 400);
+  setTimeout(function(){ window.clearInterval(timer); },35000);
 
   /******************************************
 
@@ -264,7 +292,8 @@ $(document).ready( function() {
             gameCounter++;
 
             // Delay WIN annimation until after the tile has finished turning
-            window.setTimeout(winAnimation, 1000);
+            //window.setTimeout(winAnimation, 1000);
+            winAnimation(i, square_1);
           }
           
           return true;
@@ -277,12 +306,10 @@ $(document).ready( function() {
   /******************************************
     Animation for when a player wins
   ******************************************/
-  var winAnimation = function() {
+  var winAnimation = function(winLine, team) {
     
-    alert("Game Won!!");
-    
-    // Reveal the game controls
-    showControlPanel();
+    $("#winLine").addClass("win"+winLine).addClass("win"+team);
+    $("#winLine").fadeIn(2000, toggleControlPanel);
     
     // Update the score board
     updateScores();
@@ -338,7 +365,7 @@ $(document).ready( function() {
     alert("DRAW: No more moves left");
 
     // Reveal the game controls
-    showControlPanel();
+    toggleControlPanel();
 
     // Update the score board
     updateScores();
@@ -384,28 +411,40 @@ $(document).ready( function() {
   /******************************************
     Toggle between Human and Computer Players
   ******************************************/
-  var toggleInputType = function() {
-    if ( $(this).html() === "Human" ) {
-      $(this).html("Computer");
+  var toggleInputType_1 = function() {
+    if ( $(this).data("input") === 0 ) {
+      $(this).html("Battle Droid (CPU)");
       $(this).data("input", 1)
     }
     else {
-      $(this).html("Human");
+      $(this).html("Darth Vader");
       $(this).data("input", 0)
     }
   };
-  $(".playerType").on("click", toggleInputType);
+  $("#playerX").on("click", toggleInputType_1);
+
+  var toggleInputType_2 = function() {
+    if ( $(this).data("input") === 0 ) {
+      $(this).html("R2D2 (CPU)");
+      $(this).data("input", 1)
+    }
+    else {
+      $(this).html("Yoda");
+      $(this).data("input", 0)
+    }
+  };
+  $("#playerO").on("click", toggleInputType_2);
 
   /******************************************
     Toggle first move selection
   ******************************************/
   var toggleFirstPlayer = function() {
-    if ( $(this).html() === "Red" ) {
-      $(this).html("Blue");
+    if ( $(this).data("input") === 0 ) {
+      $(this).html("Rebels");
       $(this).data("input", 1)
     }
     else {
-      $(this).html("Red");
+      $(this).html("Empire");
       $(this).data("input", 0)
     }
   };
@@ -418,7 +457,7 @@ $(document).ready( function() {
 
     if( $('#playSuper').html() == 'Standard' ) {
       isSuperGame = true;
-      $('#playSuper').html('Super');
+      $('#playSuper').html('Hyperspace');
     } else {
       isSuperGame = false;
       $('#playSuper').html('Standard');
@@ -442,8 +481,17 @@ $(document).ready( function() {
     Play a new game
   ******************************************/
   var newGame = function() {
+    // Clear the board
     resetBoard();
-    hideControlPanel();
+
+    // Remove the control panel
+    toggleControlPanel();
+
+    // Remove the winning line animation
+    $("#winLine").fadeOut(500);
+    setTimeout(function(){ $('#winLine').removeClass(); },1000);
+
+    // Get the first move
     getMove();
   }
   $("#playAgain").on("click", newGame);
@@ -470,14 +518,11 @@ $(document).ready( function() {
     gameOver = false;
   };
 
-
-
-  var showControlPanel = function() {
-    $("#controlPanel").slideDown(500);
-  };
-
-  var hideControlPanel = function() {
-    $("#controlPanel").slideUp(500);
+  /******************************************
+    Show or Hide the game controls
+  ******************************************/
+  var toggleControlPanel = function() {
+    $("#controlWrapper").slideToggle(1000);
   }
 
 
