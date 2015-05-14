@@ -67,6 +67,68 @@ $(document).ready( function() {
 
   /******************************************
 
+    INITIATE HUMAN & COMPUTER MOVES
+
+  ******************************************/
+
+  /******************************************
+    A Human takes a turn
+  ******************************************/
+  var humanTurn = function() {
+    
+    // Prevent the player from multi-clicking
+    $(".gameBoard, .gameSquare").off("click");
+
+    // Keep track of the clicked box
+    $element = $(this);
+
+    // Make the players move
+    makeMove(true);
+
+    // Get the next turn
+    getMove(); 
+  };
+
+  /******************************************
+    The Computer takes a turn
+  ******************************************/
+  var computerTurn = function() {
+    
+    // Find and make a move
+    findComputerMove();
+
+    // Get the next turn
+    getMove();
+  };
+
+  /******************************************
+    Find a valid move that the computer can make
+  ******************************************/
+  var findComputerMove = function() {
+
+    // Pick a random board & square
+    var board = Math.ceil(Math.random() * 9);
+    var square = Math.ceil(Math.random() * 9);
+    
+    // Create a move
+    if ( isSuperGame ) {
+      $element = $(".gameBoard").filter("."+board).children("."+square);
+    } else {
+      $element = $(".gameBoard").filter("."+board);
+    }
+
+    // Try to make the generated move, generate another move on failure
+    if ( !gameOver && !makeMove(false) ) {
+      findComputerMove();
+    }
+  };
+
+  
+
+
+
+  /******************************************
+
     MAKE A MOVE ON THE BOARD
 
   ******************************************/
@@ -136,69 +198,7 @@ $(document).ready( function() {
 
 
 
-  /******************************************
-
-    INITIATE HUMAN & COMPUTER MOVES
-
-  ******************************************/
-
-  /******************************************
-    A Human takes a turn
-  ******************************************/
-  var humanTurn = function() {
-    
-    // Prevent the player from multi-clicking
-    $(".gameBoard, .gameSquare").off("click");
-
-    // Keep track of the clicked box
-    $element = $(this);
-
-    // Make the players move
-    makeMove(true);
-
-    // Get the next turn
-    getMove(); 
-  };
-
-  /******************************************
-    The Computer takes a turn
-  ******************************************/
-  var computerTurn = function() {
-    
-    // Find and make a move
-    findComputerMove();
-
-    // Get the next turn
-    getMove();
-  };
-
-  /******************************************
-    Find a valid move that the computer can make
-  ******************************************/
-  var findComputerMove = function() {
-
-    // Pick a random board & square
-    var board = Math.ceil(Math.random() * 9);
-    var square = Math.ceil(Math.random() * 9);
-    
-    // Create a move
-    if ( isSuperGame ) {
-      $element = $(".gameBoard").filter("."+board).children("."+square);
-    } else {
-      $element = $(".gameBoard").filter("."+board);
-    }
-
-    // Try to make the generated move, generate another move on failure
-    if ( !gameOver && !makeMove(false) ) {
-      findComputerMove();
-    }
-  };
-
-  
-
-
-
-  /******************************************
+/******************************************
 
     DO WE HAVE A WINNER????
 
@@ -282,7 +282,7 @@ $(document).ready( function() {
     alert("Game Won!!");
     
     // Reveal the game controls
-    $("#controls").slideDown(500);
+    showControlPanel();
     
     // Update the score board
     updateScores();
@@ -338,7 +338,7 @@ $(document).ready( function() {
     alert("DRAW: No more moves left");
 
     // Reveal the game controls
-    $("#controls").slideDown(500);
+    showControlPanel();
 
     // Update the score board
     updateScores();
@@ -443,7 +443,7 @@ $(document).ready( function() {
   ******************************************/
   var newGame = function() {
     resetBoard();
-    $("#controls").slideUp(500);
+    hideControlPanel();
     getMove();
   }
   $("#playAgain").on("click", newGame);
@@ -469,6 +469,16 @@ $(document).ready( function() {
 
     gameOver = false;
   };
+
+
+
+  var showControlPanel = function() {
+    $("#controlPanel").slideDown(500);
+  };
+
+  var hideControlPanel = function() {
+    $("#controlPanel").slideUp(500);
+  }
 
 
 
