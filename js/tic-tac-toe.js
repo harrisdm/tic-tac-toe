@@ -1,5 +1,16 @@
 
 /******************************************
+  Fail-safe the local storage
+******************************************/
+if ( !localStorage ) {
+  var localStorage = {
+    gameCounter : 0,
+    winsX : 0,
+    winsO : 0
+  };
+}
+
+/******************************************
   Create the game board and then attach on document.ready
 ******************************************/
 
@@ -23,9 +34,9 @@ var totalMoves = 0;
 var subMoves = [0,0,0,0,0,0,0,0,0];
 var masterMoves = 0;
 
-var gameCounter = 0;
-var winsX = 0;
-var winsO = 0;
+var gameCounter = JSON.parse(localStorage['gameCounter']) || 0;
+var winsX = JSON.parse(localStorage['winsX']) || 0;
+var winsO = JSON.parse(localStorage['winsO']) || 0;
 
 var gameOver = false;
 var isSuperGame = false;
@@ -35,7 +46,7 @@ var $element;
 var inputTypeX;
 var inputTypeO;
 
-
+  
 
 
 $(document).ready( function() {
@@ -350,6 +361,11 @@ $(document).ready( function() {
     $("#gameCount").html(gameCounter);
     $("#scoreX").html(winsX);
     $("#scoreO").html(winsO);
+
+    // Update the local storage values
+    localStorage['gameCounter'] = JSON.stringify(gameCounter);
+    localStorage['winsX'] = JSON.stringify(winsX);
+    localStorage['winsO'] = JSON.stringify(winsO);
   };
 
   /******************************************
@@ -498,6 +514,9 @@ $(document).ready( function() {
       $(".gameBoard").on("click", humanTurn);
     }
   };
+
+  // Update the scoreboard
+  updateScores();
 
 });
 
