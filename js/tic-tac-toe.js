@@ -33,10 +33,9 @@ for ( var i = 1; i <= 9; i++ ) {
 var totalMoves = 0;
 var subMoves = [0,0,0,0,0,0,0,0,0];
 var masterMoves = 0;
-
-var gameCounter = JSON.parse(localStorage['gameCounter']) || 0;
-var winsX = JSON.parse(localStorage['winsX']) || 0;
-var winsO = JSON.parse(localStorage['winsO']) || 0;
+var gameCounter = parseInt(localStorage['gameCounter']) || 0;
+var winsX = parseInt(localStorage['winsX']) || 0;
+var winsO = parseInt(localStorage['winsO']) || 0;
 
 var gameOver = false;
 var isSuperGame = false;
