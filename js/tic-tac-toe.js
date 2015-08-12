@@ -66,7 +66,7 @@ $(document).ready( function() {
     Opening Splash
   ******************************************/
   $("#winLine, #controlWrapper, #logo, #gameWrapper").hide();
-  $("#leftBg, #rightBg, #empire, #vs, #rebels").hide();
+  $("#leftBg, #rightBg, #vs").hide();
 
   setTimeout(function(){ $("#audio").trigger('play'); }, 750);
   setTimeout(function(){ $("#splash").fadeOut(2000); },4000);
@@ -75,9 +75,9 @@ $(document).ready( function() {
   setTimeout(function(){ $("#leftBg").fadeIn(500); },8000);
   setTimeout(function(){ $("#rightBg").fadeIn(500); },8000);
   setTimeout(function(){ $("#vs").slideDown(500); },8500);
-  setTimeout(function(){ $("#empire, #rebels").show(); },10000);
+  setTimeout(function(){ $("#empire, #rebels").css("opacity", 1); },10000);
 
-  setTimeout(function(){ $("#empire, #vs, #rebels").fadeOut(500); },14000);
+  setTimeout(function(){ $(".title-wrapper").fadeOut(500); },14000);
   setTimeout(function(){ $("#gameWrapper").fadeIn(1000); },14000);
   setTimeout(function(){ toggleControlPanel(); },15500);
 

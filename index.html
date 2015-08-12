@@ -5,10 +5,7 @@
   <meta charset="UTF-8">
   <title>Star Wars || Tic-Tac-Toe</title>
   <link rel="stylesheet" href="css/tic-tac-toe.css">
-  <script src="js/jquery-1.11.3.min.js"></script>
-  <script src="js/tic-tac-toe.js"></script>
 </head>
-
 
 <body>
   
@@ -16,16 +13,19 @@
    <source src="Star Wars Theme.mp3" type="audio/mp3">
   </audio>
 
+  <!-- to display the title screen text -->
   <div id="splash"></div>
 
+  <!-- to display the background profiles -->
   <div id="leftBg"></div>
   <div id="rightBg"></div>
-  <div class="container">
-    
-    <div id="empire"></div>
-    <div id="vs"></div>
-    <div id="rebels"></div>
 
+
+  <!-- limit the width of the page and center the content -->
+  <div class="container">
+
+
+    <!-- Control Panel -->
     <div id="controlWrapper">
       <div id="controlPanel">
         
@@ -62,8 +62,16 @@
 
       </div>
     </div>
+    
 
     <div id="logo"></div>
+
+    <!-- Title page animations -->
+    <div class="title-wrapper">
+      <div id="empire"></div>
+      <div id="vs"></div>
+      <div id="rebels"></div>
+    </div>
     
     <div id="gameWrapper">
       <div id="gameBoardContainer">
@@ -89,6 +97,8 @@
 
   </div>
 
-</body>
+  <script src="js/jquery-1.11.3.min.js"></script>
+  <script src="js/tic-tac-toe.js"></script>
 
+</body>
 </html>
